@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thiệp Cưới · Minh & Anh · 20.12.2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prata&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  background:radial-gradient(ellipse 80% 60% at 50% 40%,#4d0d13,#30070c);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:'Be Vietnam Pro',sans-serif;
+  min-height:100vh;
+  user-select:none;
+}
+
+/* ── KEYFRAMES ─────────────────────────────────────────── */
+@keyframes storyIn{
+  from{opacity:0;transform:perspective(900px) rotateY(15deg) scale(1.07);filter:blur(10px)}
+  to{opacity:1;transform:perspective(900px) rotateY(0deg) scale(1);filter:blur(0)}
+}
+@keyframes kenburns{
+  from{transform:scale(1)}
+  to{transform:scale(1.14)}
+}
+@keyframes shimmerText{
+  0%{background-position:200% center}
+  100%{background-position:-200% center}
+}
+@keyframes glowPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(226,189,114,0)}
+  50%{box-shadow:0 0 22px 8px rgba(226,189,114,.38)}
+}
+@keyframes curtainUp{
+  from{transform:translateY(0)}
+  to{transform:translateY(-101%)}
+}
+@keyframes curtainDown{
+  from{transform:translateY(0)}
+  to{transform:translateY(101%)}
+}
+@keyframes introFade{
+  from{opacity:1}
+  to{opacity:0}
+}
+@keyframes wipeAcross{
+  from{transform:translateX(-88%) skewX(-6deg)}
+  to{transform:translateX(88%) skewX(-6deg)}
+}
+@keyframes riseIn{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes petalFall{
+  0%{transform:translateY(-8vh) translateX(0) rotate(0deg);opacity:.8}
+  100%{transform:translateY(108vh) translateX(var(--drift,30px)) rotate(720deg);opacity:0}
+}
+@keyframes bokehDrift{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-36px) scale(1.14)}
+}
+@keyframes pulseHint{
+  0%,100%{opacity:.5}
+  50%{opacity:1}
+}
+@keyframes progressFill{
+  from{width:0%}
+  to{width:100%}
+}
+@keyframes wipeIn{
+  from{transform:translateX(-150%) skewX(-6deg)}
+  to{transform:translateX(150%) skewX(-6deg)}
+}
+
+/* ── OUTER WRAPPER ─────────────────────────────────────── */
+.outer{
+  position:relative;
+  display:flex;align-items:center;justify-content:center;
+  width:100vw;height:100vh;
+}
+
+/* ── NAV ARROWS ────────────────────────────────────────── */
+.nav-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  background:rgba(226,189,114,.18);border:1px solid rgba(226,189,114,.3);
+  color:#e2bd72;font-size:26px;width:44px;height:44px;
+  border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .2s,opacity .2s;z-index:50;
+  backdrop-filter:blur(4px);
+}
+.nav-arrow:hover{background:rgba(226,189,114,.32)}
+.nav-arrow:disabled,.nav-arrow[disabled]{opacity:.25;cursor:default;pointer-events:none}
+.nav-arrow.left{left:calc(50% - 260px)}
+.nav-arrow.right{right:calc(50% - 260px)}
+@media(max-width:600px){
+  .nav-arrow.left{left:4px}
+  .nav-arrow.right{right:4px}
+}
+
+/* ── CARD ──────────────────────────────────────────────── */
+.card{
+  position:relative;
+  width:442px;max-width:95vw;
+  height:min(806px,90vh);
+  border-radius:16px;
+  background:linear-gradient(168deg,#8e1b26,#6f121c);
+  border:1px solid rgba(226,189,114,.35);
+  box-shadow:0 44px 100px rgba(0,0,0,.6);
+  overflow:hidden;
+  transform-style:preserve-3d;
+  transition:transform .12s ease-out;
+  cursor:default;
+}
+/* diagonal pattern overlay */
+.card::before{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(
+    45deg,
+    rgba(226,189,114,.045) 0px,
+    rgba(226,189,114,.045) 1px,
+    transparent 1px,
+    transparent 12px
+  );
+}
+
+/* ── PROGRESS BAR ──────────────────────────────────────── */
+.progress-track{
+  position:absolute;top:0;left:0;right:0;height:3px;
+  display:flex;gap:3px;padding:0 3px;z-index:20;
+}
+.progress-seg{
+  flex:1;height:100%;background:rgba(226,189,114,.2);border-radius:2px;overflow:hidden;
+}
+.progress-seg .fill{
+  height:100%;width:0%;background:#e2bd72;border-radius:2px;
+}
+.progress-seg.done .fill{width:100%}
+.progress-seg.active .fill{animation:progressFill linear forwards}
+
+/* ── TOP-RIGHT HUD ─────────────────────────────────────── */
+.hud{
+  position:absolute;top:10px;right:12px;z-index:25;
+  display:flex;align-items:center;gap:10px;
+}
+.counter{
+  font-family:'Be Vietnam Pro',sans-serif;font-size:11px;
+  color:rgba(242,225,195,.7);letter-spacing:.05em;
+}
+.playbtn{
+  background:none;border:none;color:rgba(242,225,195,.7);
+  font-size:13px;cursor:pointer;padding:2px 4px;
+  transition:color .2s;
+}
+.playbtn:hover{color:#e2bd72}
+
+/* ── SCREENS ───────────────────────────────────────────── */
+.screen{
+  position:absolute;inset:0;
+  overflow-y:auto;overflow-x:hidden;
+  display:flex;flex-direction:column;align-items:center;
+  padding:44px 28px 28px;
+  opacity:0;pointer-events:none;
+  transition:none;
+  z-index:5;
+  scrollbar-width:none;
+}
+.screen::-webkit-scrollbar{display:none}
+.screen.active{opacity:1;pointer-events:all;animation:storyIn .9s ease forwards}
+/* cream screens */
+.screen.cream{background:linear-gradient(168deg,#f9f0dd,#f3e6cb)}
+
+/* ── TAP ZONES ─────────────────────────────────────────── */
+.tap-zone{
+  position:absolute;top:0;bottom:0;width:15%;z-index:15;cursor:pointer;
+}
+.tap-zone.left{left:0}
+.tap-zone.right{right:0}
+
+/* ── WIPE OVERLAY ──────────────────────────────────────── */
+.wipe-bar{
+  position:absolute;inset:-10% 0;
+  background:linear-gradient(168deg,#8e1b26,#6f121c);
+  transform:translateX(-150%) skewX(-6deg);
+  z-index:30;pointer-events:none;
+  width:130%;
+}
+.wipe-bar.running{animation:wipeIn 1.05s ease forwards}
+
+/* ── CURTAIN ───────────────────────────────────────────── */
+.curtain{
+  position:absolute;inset:0;z-index:100;overflow:hidden;
+}
+.curtain-top,.curtain-bot{
+  position:absolute;left:0;right:0;
+  background:linear-gradient(168deg,#8e1b26,#6f121c);
+  display:flex;align-items:center;justify-content:center;
+  transition:none;
+}
+.curtain-top{top:0;height:50.5%}
+.curtain-bot{bottom:0;height:50.5%}
+.curtain-logo{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;z-index:101;pointer-events:none;
+}
+.curtain-logo .chi{font-size:42px;color:#e2bd72;margin-bottom:6px}
+.curtain-logo .cnames{font-family:'Prata',serif;font-size:22px;color:#f6e7c8}
+.curtain-logo .cdate{font-family:'Be Vietnam Pro',sans-serif;font-size:12px;color:rgba(246,231,200,.6);margin-top:4px;letter-spacing:.1em}
+.curtain-top.up{animation:curtainUp 1.15s ease forwards}
+.curtain-bot.dn{animation:curtainDown 1.15s ease forwards}
+.curtain.fade{animation:introFade .5s ease forwards .9s both}
+.curtain.hide{display:none}
+
+/* ── PARTICLES ─────────────────────────────────────────── */
+.petal{
+  position:absolute;pointer-events:none;z-index:4;
+  font-size:15px;color:#e2bd72;
+  animation:petalFall linear infinite;
+}
+.bokeh{
+  position:absolute;pointer-events:none;z-index:3;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(226,189,114,.22),transparent 70%);
+  filter:blur(12px);
+  animation:bokehDrift ease-in-out infinite alternate;
+}
+
+/* ── BOTTOM HINT ───────────────────────────────────────── */
+.card-hint{
+  position:absolute;bottom:8px;left:0;right:0;
+  text-align:center;font-size:9px;letter-spacing:.08em;
+  color:rgba(226,189,114,.4);z-index:20;pointer-events:none;
+}
+.card-hint.on-cream{color:rgba(138,28,38,.3)}
+
+/* ─────────────────────────────────────────────────────── */
+/* ── SCREEN 0 · COVER (RED) ─────────────────────────── */
+.cover-photo-wrap{
+  position:relative;width:160px;height:200px;margin:0 auto 16px;
+  border-radius:50%/50%;overflow:hidden;
+  border:2px solid rgba(226,189,114,.5);
+  flex-shrink:0;
+}
+.cover-photo-wrap img{width:100%;height:100%;object-fit:cover;animation:kenburns 18s ease-in-out infinite alternate}
+.chi-badge{
+  position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);
+  width:34px;height:34px;background:linear-gradient(135deg,#e2bd72,#c9a24e);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:16px;box-shadow:0 2px 10px rgba(0,0,0,.3);
+  border:2px solid #6f121c;
+}
+.cover-label{
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(226,189,114,.7);margin-bottom:14px;margin-top:6px;
+  text-align:center;
+}
+.cover-names{
+  font-family:'Prata',serif;font-size:37px;
+  background:linear-gradient(90deg,#c9a24e,#f0d890,#e2bd72,#c9a24e,#f0d890);
+  background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation:shimmerText 4.5s linear infinite;
+  text-align:center;line-height:1;margin-bottom:8px;
+}
+.cover-date{
+  font-family:'Prata',serif;font-size:18px;color:rgba(226,189,114,.85);
+  letter-spacing:.12em;text-align:center;margin-bottom:4px;
+}
+.cover-lunar{
+  font-size:11px;color:rgba(246,231,200,.5);letter-spacing:.06em;text-align:center;margin-bottom:22px;
+}
+.cover-cta{
+  font-size:12px;color:rgba(226,189,114,.7);letter-spacing:.08em;
+  animation:pulseHint 2.4s ease-in-out infinite;text-align:center;
+  margin-top:auto;
+}
+
+/* ── SCREEN 1 · INVITATION (CREAM) ─────────────────── */
+.s1-heading{
+  font-family:'Prata',serif;font-size:22px;color:#8a1c26;
+  text-align:center;margin-bottom:12px;
+  animation:riseIn .7s ease .1s both;
+}
+.s1-para{
+  font-size:13px;font-weight:300;color:#5a3030;line-height:1.75;
+  text-align:center;margin-bottom:18px;
+  animation:riseIn .7s ease .2s both;
+}
+.gold-divider{
+  width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(226,189,114,.6),transparent);
+  margin:14px 0;
+  animation:riseIn .7s ease .3s both;
+}
+.family-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:0;width:100%;
+  animation:riseIn .7s ease .4s both;
+}
+.family-col{padding:16px 10px;}
+.family-col:first-child{border-right:1px solid rgba(138,28,38,.12)}
+.family-col-title{
+  font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:#8a1c26;margin-bottom:10px;text-align:center;
+}
+.family-line{font-size:12px;color:#6b4040;line-height:1.8;text-align:center}
+.family-role{
+  font-size:11px;color:#8a1c26;font-style:italic;margin-top:6px;text-align:center;
+}
+
+/* ── SCREEN 2 · COUNTDOWN (RED) ────────────────────── */
+.countdown-wrap{
+  display:flex;gap:10px;margin-bottom:20px;justify-content:center;
+  animation:riseIn .7s ease .15s both;
+}
+.cd-box{
+  text-align:center;background:rgba(226,189,114,.1);border:1px solid rgba(226,189,114,.3);
+  border-radius:10px;padding:12px 14px;min-width:64px;
+  animation:glowPulse 3.6s ease-in-out infinite;
+}
+.cd-num{
+  font-family:'Prata',serif;font-size:28px;color:#e2bd72;line-height:1;
+  display:block;
+}
+.cd-label{font-size:9px;color:rgba(226,189,114,.6);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+.s2-event{
+  font-family:'Prata',serif;font-size:24px;color:#e2bd72;text-align:center;margin-bottom:8px;
+  animation:riseIn .7s ease .25s both;
+}
+.s2-time{font-size:14px;color:#f6e7c8;text-align:center;margin-bottom:4px;
+  animation:riseIn .7s ease .3s both;
+}
+.s2-venue{font-size:12px;color:rgba(246,231,200,.65);text-align:center;margin-bottom:20px;
+  animation:riseIn .7s ease .35s both;
+}
+.btn-gold{
+  display:inline-block;padding:10px 24px;
+  background:linear-gradient(135deg,#e2bd72,#c9a24e);
+  color:#5a1018;font-size:12px;font-weight:600;letter-spacing:.1em;
+  border-radius:40px;border:none;cursor:pointer;
+  box-shadow:0 4px 18px rgba(0,0,0,.25);
+  transition:transform .15s,box-shadow .15s;
+  text-decoration:none;
+}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(0,0,0,.3)}
+.btn-outline-cream{
+  display:inline-block;padding:10px 24px;
+  background:transparent;border:1px solid rgba(226,189,114,.5);
+  color:#e2bd72;font-size:12px;font-weight:500;letter-spacing:.1em;
+  border-radius:40px;cursor:pointer;
+  transition:background .2s,border-color .2s;text-decoration:none;
+}
+.btn-outline-cream:hover{background:rgba(226,189,114,.12)}
+
+/* ── SCREEN 3 · VENUE (CREAM) ──────────────────────── */
+.s3-hall{font-family:'Prata',serif;font-size:32px;color:#8a1c26;text-align:center;margin-bottom:4px;
+  animation:riseIn .7s ease .1s both;
+}
+.s3-room{font-size:13px;color:#a04040;text-align:center;margin-bottom:2px;
+  animation:riseIn .7s ease .15s both;
+}
+.s3-addr{font-size:12px;color:#7a5050;text-align:center;margin-bottom:12px;
+  animation:riseIn .7s ease .2s both;
+}
+.s3-times{
+  font-size:12px;color:#8a1c26;text-align:center;margin-bottom:14px;
+  letter-spacing:.04em;
+  animation:riseIn .7s ease .25s both;
+}
+.map-placeholder{
+  width:100%;height:130px;border-radius:10px;margin-bottom:14px;
+  background:repeating-linear-gradient(45deg,#e8d5b5 0px,#e8d5b5 10px,#f3e6cb 10px,#f3e6cb 20px);
+  border:1px solid rgba(138,28,38,.15);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(138,28,38,.4);font-size:12px;letter-spacing:.06em;
+  animation:riseIn .7s ease .3s both;
+}
+.btn-red-filled{
+  display:inline-block;padding:10px 22px;
+  background:#8a1c26;color:#f6e7c8;
+  font-size:12px;font-weight:600;letter-spacing:.1em;
+  border-radius:40px;border:none;cursor:pointer;
+  transition:background .2s;text-decoration:none;
+}
+.btn-red-filled:hover{background:#a02030}
+.btn-outline-red{
+  display:inline-block;padding:10px 22px;
+  background:transparent;border:1px solid #8a1c26;
+  color:#8a1c26;font-size:12px;font-weight:500;letter-spacing:.1em;
+  border-radius:40px;cursor:pointer;transition:background .2s;text-decoration:none;
+}
+.btn-outline-red:hover{background:rgba(138,28,38,.07)}
+.btn-row{display:flex;gap:10px;justify-content:center;margin-bottom:14px;
+  animation:riseIn .7s ease .35s both;flex-wrap:wrap;
+}
+.dresscode-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8a1c26;
+  text-align:center;margin-bottom:8px;
+  animation:riseIn .7s ease .4s both;
+}
+.swatches{display:flex;gap:8px;justify-content:center;margin-bottom:6px;
+  animation:riseIn .7s ease .45s both;
+}
+.swatch{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.4)}
+.dresscode-caption{font-size:11px;font-style:italic;color:#9a6060;text-align:center;
+  animation:riseIn .7s ease .5s both;
+}
+
+/* ── SCREEN 4 · ALBUM (RED) ────────────────────────── */
+.s4-heading{font-family:'Prata',serif;font-size:26px;color:#e2bd72;text-align:center;margin-bottom:14px;
+  animation:riseIn .7s ease .1s both;
+}
+.album-wide{
+  width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;margin-bottom:8px;
+  border:1px solid rgba(226,189,114,.25);
+  animation:riseIn .7s ease .2s both;
+}
+.album-wide img{width:100%;height:100%;object-fit:cover}
+.album-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;
+  animation:riseIn .7s ease .3s both;
+}
+.album-sq{border-radius:8px;overflow:hidden;aspect-ratio:1;border:1px solid rgba(226,189,114,.2)}
+.album-sq img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.album-sq:hover img{transform:scale(1.06)}
+.s4-more-btn-wrap{text-align:center;animation:riseIn .7s ease .4s both}
+
+/* ── SCREEN 5 · RSVP (CREAM) ───────────────────────── */
+.s5-heading{font-family:'Prata',serif;font-size:24px;color:#8a1c26;text-align:center;margin-bottom:16px;
+  animation:riseIn .7s ease .1s both;
+}
+.s5-input{
+  width:100%;border:none;border-bottom:1.5px solid rgba(138,28,38,.35);
+  background:transparent;padding:8px 4px;font-size:14px;color:#5a3030;
+  font-family:'Be Vietnam Pro',sans-serif;outline:none;margin-bottom:16px;
+  animation:riseIn .7s ease .2s both;
+}
+.s5-input::placeholder{color:rgba(138,28,38,.35)}
+.rsvp-btns{display:flex;gap:10px;justify-content:center;margin-bottom:14px;
+  animation:riseIn .7s ease .3s both;
+}
+.rsvp-btn{
+  padding:9px 20px;border:1.5px solid rgba(138,28,38,.5);background:transparent;
+  color:#8a1c26;font-size:13px;font-weight:500;border-radius:40px;cursor:pointer;
+  transition:background .2s,color .2s;
+}
+.rsvp-btn.selected{background:#8a1c26;color:#f6e7c8}
+.send-btn{
+  display:block;width:100%;padding:11px;
+  background:#8a1c26;color:#f6e7c8;font-size:13px;font-weight:600;
+  border-radius:40px;border:none;cursor:pointer;margin-bottom:16px;
+  transition:background .2s;
+  animation:riseIn .7s ease .4s both;
+}
+.send-btn:hover{background:#a02030}
+/* envelope */
+.gift-section{animation:riseIn .7s ease .5s both}
+.gift-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8a1c26;
+  text-align:center;margin-bottom:10px;
+}
+.envelope-wrap{
+  width:188px;height:238px;margin:0 auto;
+  perspective:800px;cursor:pointer;
+}
+.envelope-inner{
+  width:100%;height:100%;position:relative;
+  transform-style:preserve-3d;
+  transition:transform .7s ease;
+}
+.envelope-wrap.flipped .envelope-inner{transform:rotateY(180deg)}
+.envelope-face,.envelope-back{
+  position:absolute;inset:0;border-radius:12px;
+  backface-visibility:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.envelope-face{
+  background:#6f121c;border:1px solid rgba(226,189,114,.35);
+}
+.env-chi{font-size:36px;margin-bottom:6px}
+.env-mung{font-family:'Prata',serif;font-size:16px;color:#e2bd72;margin-bottom:4px}
+.env-tap{font-size:10px;color:rgba(226,189,114,.5);letter-spacing:.08em}
+.envelope-back{
+  background:#fff;border:1px solid #e0d0b0;
+  transform:rotateY(180deg);
+  padding:12px;gap:10px;
+}
+.qr-item{text-align:center;flex:1}
+.qr-item img{width:80px;height:80px;border:1px solid #e0d0b0;border-radius:4px}
+.qr-bank{font-size:9px;color:#666;margin-top:4px;line-height:1.5}
+.qr-row{display:flex;gap:8px;width:100%;justify-content:center}
+
+/* ── SCREEN 6 · GUESTBOOK (RED) ────────────────────── */
+.s6-heading{font-family:'Prata',serif;font-size:26px;color:#e2bd72;text-align:center;margin-bottom:16px;
+  animation:riseIn .7s ease .1s both;
+}
+.s6-input{
+  width:100%;border:none;border-bottom:1.5px solid rgba(226,189,114,.35);
+  background:transparent;padding:8px 4px;font-size:13px;color:#f6e7c8;
+  font-family:'Be Vietnam Pro',sans-serif;outline:none;margin-bottom:10px;
+  animation:riseIn .7s ease .2s both;
+}
+.s6-input::placeholder{color:rgba(246,231,200,.35)}
+.s6-textarea{
+  width:100%;border:1px solid rgba(226,189,114,.25);border-radius:8px;
+  background:rgba(0,0,0,.12);padding:10px;font-size:13px;color:#f6e7c8;
+  font-family:'Be Vietnam Pro',sans-serif;outline:none;resize:none;height:80px;
+  margin-bottom:12px;
+  animation:riseIn .7s ease .25s both;
+}
+.s6-textarea::placeholder{color:rgba(246,231,200,.35)}
+.s6-send{
+  display:block;width:100%;padding:11px;
+  background:linear-gradient(135deg,#e2bd72,#c9a24e);
+  color:#5a1018;font-size:13px;font-weight:700;
+  border-radius:40px;border:none;cursor:pointer;margin-bottom:16px;
+  transition:opacity .2s;
+  animation:riseIn .7s ease .3s both;
+}
+.s6-send:hover{opacity:.88}
+.wishes-list{width:100%;animation:riseIn .7s ease .4s both}
+.wish-item{
+  background:rgba(226,189,114,.08);border:1px solid rgba(226,189,114,.18);
+  border-radius:8px;padding:10px 12px;margin-bottom:8px;
+}
+.wish-name{font-size:11px;color:#e2bd72;font-weight:600;margin-bottom:3px}
+.wish-text{font-size:12px;color:rgba(246,231,200,.8);line-height:1.6}
+.s6-chi-divider{text-align:center;color:rgba(226,189,114,.4);font-size:18px;margin:10px 0}
+.s6-thanks{font-size:12px;color:rgba(246,231,200,.6);text-align:center;margin-bottom:4px}
+.s6-endnames{font-family:'Prata',serif;font-size:20px;color:#e2bd72;text-align:center;margin-bottom:4px}
+.s6-enddate{font-size:11px;color:rgba(226,189,114,.5);text-align:center;letter-spacing:.08em}
+
+/* ── BOTTOM LINKS ───────────────────────────────────── */
+.bottom-links{
+  position:fixed;bottom:12px;left:50%;transform:translateX(-50%);
+  display:flex;gap:18px;z-index:200;
+}
+.bottom-links a{
+  font-size:10px;color:rgba(246,231,200,.35);letter-spacing:.06em;text-decoration:none;
+}
+.bottom-links a:hover{color:rgba(246,231,200,.7)}
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media(max-width:500px){
+  .card{width:100vw;height:100vh;max-width:100vw;max-height:100vh;border-radius:0}
+  .bottom-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- CURTAIN -->
+<div class="curtain" id="curtain">
+  <div class="curtain-top" id="ctop"></div>
+  <div class="curtain-bot" id="cbot"></div>
+  <div class="curtain-logo">
+    <div class="chi">囍</div>
+    <div class="cnames">Minh &amp; Anh</div>
+    <div class="cdate">20 · 12 · 2026</div>
+  </div>
+</div>
+
+<!-- OUTER WRAPPER -->
+<div class="outer">
+  <!-- NAV ARROWS -->
+  <button class="nav-arrow left" id="btnPrev" disabled>‹</button>
+  <button class="nav-arrow right" id="btnNext">›</button>
+
+  <!-- CARD -->
+  <div class="card" id="card">
+
+    <!-- progress bar -->
+    <div class="progress-track" id="progressTrack"></div>
+
+    <!-- HUD -->
+    <div class="hud">
+      <span class="counter" id="counter">1 / 7</span>
+      <button class="playbtn" id="playBtn" title="Tạm dừng">❚❚</button>
+    </div>
+
+    <!-- TAP ZONES -->
+    <div class="tap-zone left" id="tapLeft"></div>
+    <div class="tap-zone right" id="tapRight"></div>
+
+    <!-- WIPE -->
+    <div class="wipe-bar" id="wipeBar"></div>
+
+    <!-- PARTICLES -->
+    <div id="particles"></div>
+
+    <!-- ════ SCREEN 0 · COVER ════ -->
+    <div class="screen active" id="s0">
+      <div class="cover-photo-wrap">
+        <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=900&q=80" alt="Couple">
+        <div class="chi-badge">囍</div>
+      </div>
+      <div class="cover-label">Thiệp mời lễ thành hôn</div>
+      <div class="cover-names">Minh &amp; Anh</div>
+      <div class="cover-date">20 . 12 . 2026</div>
+      <div class="cover-lunar">Nhằm ngày 01 tháng 11 năm Bính Ngọ</div>
+      <div class="cover-cta">Chạm để mở thiệp ›</div>
+    </div>
+
+    <!-- ════ SCREEN 1 · INVITATION ════ -->
+    <div class="screen cream" id="s1">
+      <div class="s1-heading">Trân Trọng Kính Mời</div>
+      <p class="s1-para">
+        Được sự đồng ý của hai họ, chúng tôi trân trọng kính mời<br>
+        Ông/Bà/Anh/Chị đến tham dự lễ thành hôn của chúng tôi.<br>
+        Sự hiện diện của Quý khách là niềm vinh hạnh lớn lao nhất<br>
+        đối với gia đình chúng tôi trong ngày trọng đại này.
+      </p>
+      <div class="gold-divider"></div>
+      <div class="family-grid">
+        <div class="family-col">
+          <div class="family-col-title">Nhà Trai</div>
+          <div class="family-line">
+            Ông Nguyễn Văn Bình<br>
+            Bà Trần Thị Hoa<br>
+            68 Trần Hưng Đạo, Q.5
+          </div>
+          <div class="family-role">Út nam · Nguyễn Văn Minh</div>
+        </div>
+        <div class="family-col">
+          <div class="family-col-title">Nhà Gái</div>
+          <div class="family-line">
+            Ông Lê Văn Cường<br>
+            Bà Phạm Thị Mai<br>
+            123 Đường Hoa Lan, Q.1
+          </div>
+          <div class="family-role">Trưởng nữ · Lê Phương Anh</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ SCREEN 2 · CEREMONY COUNTDOWN ════ -->
+    <div class="screen" id="s2">
+      <div style="animation:riseIn .7s ease .05s both;text-align:center;margin-bottom:14px">
+        <div class="cover-label" style="margin-bottom:0">Đếm ngược đến ngày cưới</div>
+      </div>
+      <div class="countdown-wrap">
+        <div class="cd-box"><span class="cd-num" id="cd-d">--</span><div class="cd-label">Ngày</div></div>
+        <div class="cd-box"><span class="cd-num" id="cd-h">--</span><div class="cd-label">Giờ</div></div>
+        <div class="cd-box"><span class="cd-num" id="cd-m">--</span><div class="cd-label">Phút</div></div>
+        <div class="cd-box"><span class="cd-num" id="cd-s">--</span><div class="cd-label">Giây</div></div>
+      </div>
+      <div class="s2-event">Lễ Thành Hôn</div>
+      <div class="s2-time">10:00 · Chủ Nhật · 20 tháng 12 năm 2026</div>
+      <div class="s2-venue">Tư gia nhà gái · 123 Đường Hoa Lan Q.1</div>
+      <div style="text-align:center;animation:riseIn .7s ease .4s both">
+        <button class="btn-outline-cream" onclick="downloadICS('ceremony')">Thêm vào lịch</button>
+      </div>
+    </div>
+
+    <!-- ════ SCREEN 3 · RECEPTION VENUE ════ -->
+    <div class="screen cream" id="s3">
+      <div class="s3-hall">White Palace</div>
+      <div class="s3-room">Sảnh Rose · Tầng 3</div>
+      <div class="s3-addr">108 Phạm Văn Đồng, TP. Thủ Đức</div>
+      <div class="gold-divider" style="animation:riseIn .7s ease .22s both"></div>
+      <div class="s3-times">17:30 Đón khách &nbsp;✦&nbsp; 18:30 Khai tiệc</div>
+      <div class="map-placeholder">📍 Bản đồ · White Palace</div>
+      <div class="btn-row">
+        <a class="btn-red-filled" href="https://maps.google.com/?q=108+Pham+Van+Dong+Thu+Duc" target="_blank" rel="noopener">Xem chỉ đường</a>
+        <button class="btn-outline-red" onclick="downloadICS('reception')">Thêm vào lịch</button>
+      </div>
+      <div class="dresscode-label">Dress Code</div>
+      <div class="swatches">
+        <div class="swatch" style="background:#6f121c" title="Đỏ đậm"></div>
+        <div class="swatch" style="background:#e2bd72" title="Vàng gold"></div>
+        <div class="swatch" style="background:#f6e7c8" title="Kem"></div>
+        <div class="swatch" style="background:#3b2012" title="Nâu đậm"></div>
+      </div>
+      <div class="dresscode-caption">Trang phục trang trọng · lịch sự · tông màu hài hòa</div>
+    </div>
+
+    <!-- ════ SCREEN 4 · ALBUM ════ -->
+    <div class="screen" id="s4">
+      <div class="s4-heading">Album Cưới</div>
+      <div class="album-wide">
+        <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=80" alt="Wedding album">
+      </div>
+      <div class="album-grid">
+        <div class="album-sq"><img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=700&q=80" alt="Photo 1"></div>
+        <div class="album-sq"><img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=700&q=80" alt="Photo 2"></div>
+        <div class="album-sq"><img src="https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=700&q=80" alt="Photo 3"></div>
+        <div class="album-sq"><img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=700&q=80" alt="Photo 4"></div>
+      </div>
+      <div class="s4-more-btn-wrap">
+        <button class="btn-outline-cream">Xem trọn bộ album</button>
+      </div>
+    </div>
+
+    <!-- ════ SCREEN 5 · RSVP + GIFT ════ -->
+    <div class="screen cream" id="s5">
+      <div class="s5-heading">Xác Nhận Tham Dự</div>
+      <input class="s5-input" id="rsvpName" type="text" placeholder="Tên của bạn…">
+      <div class="rsvp-btns">
+        <button class="rsvp-btn" id="btnCome" onclick="selectRsvp('come')">Tôi sẽ đến</button>
+        <button class="rsvp-btn" id="btnMiss" onclick="selectRsvp('miss')">Xin phép vắng</button>
+      </div>
+      <button class="send-btn" onclick="submitRsvp()">Gửi hồi âm</button>
+      <div class="gold-divider" style="background:linear-gradient(90deg,transparent,rgba(138,28,38,.3),transparent)"></div>
+      <div class="gift-section">
+        <div class="gift-label">Phong bao mừng cưới</div>
+        <div class="envelope-wrap" id="envelope" onclick="flipEnvelope()">
+          <div class="envelope-inner">
+            <div class="envelope-face">
+              <div class="env-chi">囍</div>
+              <div class="env-mung">Mừng Cưới</div>
+              <div class="env-tap">Chạm để mở</div>
+            </div>
+            <div class="envelope-back">
+              <div class="qr-row">
+                <div class="qr-item">
+                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=VCB+0071000123456+NGUYEN+VAN+MINH" alt="VCB QR">
+                  <div class="qr-bank">VCB<br>0071000123456<br>NGUYEN VAN MINH</div>
+                </div>
+                <div class="qr-item">
+                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=TCB+19034567890+LE+PHUONG+ANH" alt="TCB QR">
+                  <div class="qr-bank">TCB<br>1903 4567 8901<br>LE PHUONG ANH</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ SCREEN 6 · GUESTBOOK ════ -->
+    <div class="screen" id="s6">
+      <div class="s6-heading">Sổ Lưu Bút</div>
+      <input class="s6-input" id="gbName" type="text" placeholder="Tên của bạn…">
+      <textarea class="s6-textarea" id="gbMsg" placeholder="Lời chúc của bạn…"></textarea>
+      <button class="s6-send" onclick="submitWish()">Gửi lời chúc</button>
+      <div class="wishes-list" id="wishesList">
+        <div class="wish-item">
+          <div class="wish-name">Nguyễn Thu Hà</div>
+          <div class="wish-text">Chúc hai bạn trăm năm hạnh phúc, đầu bạc răng long! 💕</div>
+        </div>
+        <div class="wish-item">
+          <div class="wish-name">Trần Hoàng Nam</div>
+          <div class="wish-text">Chúc Minh và Anh luôn yêu thương nhau và hạnh phúc mãi mãi!</div>
+        </div>
+      </div>
+      <div class="s6-chi-divider">囍 &nbsp;&nbsp; 囍</div>
+      <div class="s6-thanks">Trân trọng cảm ơn!</div>
+      <div class="s6-endnames">Minh &amp; Anh</div>
+      <div class="s6-enddate">20 · 12 · 2026</div>
+    </div>
+
+    <!-- HINT -->
+    <div class="card-hint" id="cardHint">‹ CHẠM HAI BÊN ĐỂ CHUYỂN · GIỮ ĐỂ TẠM DỪNG ›</div>
+
+  </div><!-- /card -->
+</div><!-- /outer -->
+
+<!-- BOTTOM LINKS -->
+<div class="bottom-links">
+  <a href="v1.html">← Phiên bản 1</a>
+  <a href="v3.html">Phiên bản 3 →</a>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════ */
+const TOTAL = 7;
+let current = 0;
+let isPlaying = true;
+let autoTimer = null;
+let progressAnim = null;
+let rsvpChoice = null;
+let transitioning = false;
+let holdTimer = null;
+let holdActive = false;
+const DWELL = 8000; // ms per screen
+
+/* ══════════════════════════════════════════════
+   ELEMENTS
+══════════════════════════════════════════════ */
+const card = document.getElementById('card');
+const screens = Array.from({length:TOTAL},(_,i)=>document.getElementById('s'+i));
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const playBtn = document.getElementById('playBtn');
+const counterEl = document.getElementById('counter');
+const wipeBar = document.getElementById('wipeBar');
+const progressTrack = document.getElementById('progressTrack');
+const cardHint = document.getElementById('cardHint');
+
+/* ══════════════════════════════════════════════
+   PROGRESS BAR BUILD
+══════════════════════════════════════════════ */
+function buildProgress(){
+  progressTrack.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const seg=document.createElement('div');
+    seg.className='progress-seg';
+    const fill=document.createElement('div');
+    fill.className='fill';
+    seg.appendChild(fill);
+    progressTrack.appendChild(seg);
+  }
+}
+buildProgress();
+
+function updateProgress(idx, animDuration){
+  const segs=progressTrack.querySelectorAll('.progress-seg');
+  segs.forEach((s,i)=>{
+    s.classList.remove('done','active');
+    const f=s.querySelector('.fill');
+    f.style.animation='none';f.style.width='';
+    if(i<idx){
+      s.classList.add('done');
+    } else if(i===idx && isPlaying){
+      s.classList.add('active');
+      f.style.animation=`progressFill ${animDuration}ms linear forwards`;
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════
+   NAVIGATE
+══════════════════════════════════════════════ */
+function goTo(idx, dir){
+  if(transitioning||idx<0||idx>=TOTAL)return;
+  transitioning=true;
+  clearAuto();
+
+  // update hint color
+  const isNextCream=screens[idx].classList.contains('cream');
+  cardHint.className='card-hint'+(isNextCream?' on-cream':'');
+
+  // wipe animation
+  wipeBar.style.animation='none';
+  void wipeBar.offsetWidth;
+  wipeBar.style.animation='wipeIn 1.05s ease forwards';
+
+  setTimeout(()=>{
+    screens[current].classList.remove('active');
+    current=idx;
+    screens[current].classList.add('active');
+    // scroll to top
+    screens[current].scrollTop=0;
+    updateNav();
+    updateProgress(current,DWELL);
+    counterEl.textContent=`${current+1} / ${TOTAL}`;
+  },470);
+
+  setTimeout(()=>{
+    wipeBar.style.animation='none';
+    transitioning=false;
+    if(isPlaying) startAuto();
+  },1100);
+}
+
+function updateNav(){
+  btnPrev.disabled=(current===0);
+  btnNext.disabled=(current===TOTAL-1);
+}
+
+/* ══════════════════════════════════════════════
+   AUTO-PLAY
+══════════════════════════════════════════════ */
+function startAuto(){
+  clearAuto();
+  if(!isPlaying||current===TOTAL-1)return;
+  updateProgress(current,DWELL);
+  autoTimer=setTimeout(()=>{
+    if(!isPlaying||transitioning)return;
+    goTo(current+1,1);
+  },DWELL);
+}
+function clearAuto(){
+  clearTimeout(autoTimer);
+  autoTimer=null;
+  // stop progress fill
+  const segs=progressTrack.querySelectorAll('.progress-seg');
+  segs.forEach(s=>{
+    s.classList.remove('active');
+    const f=s.querySelector('.fill');
+    f.style.animation='none';
+  });
+}
+function togglePlay(){
+  isPlaying=!isPlaying;
+  playBtn.textContent=isPlaying?'❚❚':'▶';
+  if(isPlaying){startAuto();}else{clearAuto();}
+}
+
+/* ══════════════════════════════════════════════
+   KEYBOARD
+══════════════════════════════════════════════ */
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'&&current<TOTAL-1)goTo(current+1,1);
+  if(e.key==='ArrowLeft'&&current>0)goTo(current-1,-1);
+  if(e.key===' '){e.preventDefault();togglePlay();}
+});
+
+/* ══════════════════════════════════════════════
+   BUTTON EVENTS
+══════════════════════════════════════════════ */
+btnPrev.addEventListener('click',()=>{ if(current>0) goTo(current-1,-1); });
+btnNext.addEventListener('click',()=>{ if(current<TOTAL-1) goTo(current+1,1); });
+playBtn.addEventListener('click',togglePlay);
+
+/* ══════════════════════════════════════════════
+   TAP ZONES (tap = nav, hold = pause)
+══════════════════════════════════════════════ */
+function setupTapZone(el, dir){
+  el.addEventListener('pointerdown',e=>{
+    holdActive=false;
+    holdTimer=setTimeout(()=>{
+      holdActive=true;
+      if(isPlaying){ clearAuto(); playBtn.textContent='▶'; }
+      else{ playBtn.textContent='▶'; }
+      isPlaying=false;
+    },350);
+  });
+  el.addEventListener('pointerup',e=>{
+    clearTimeout(holdTimer);
+    if(holdActive){
+      isPlaying=true;playBtn.textContent='❚❚';startAuto();
+    } else {
+      // tap
+      if(dir===-1&&current>0) goTo(current-1,-1);
+      if(dir===1&&current<TOTAL-1) goTo(current+1,1);
+    }
+  });
+  el.addEventListener('pointerleave',()=>clearTimeout(holdTimer));
+}
+setupTapZone(document.getElementById('tapLeft'),-1);
+setupTapZone(document.getElementById('tapRight'),1);
+
+/* ══════════════════════════════════════════════
+   3D TILT
+══════════════════════════════════════════════ */
+card.addEventListener('mousemove',e=>{
+  const r=card.getBoundingClientRect();
+  const cx=r.left+r.width/2,cy=r.top+r.height/2;
+  const dx=(e.clientX-cx)/r.width*2;
+  const dy=(e.clientY-cy)/r.height*2;
+  card.style.transform=`perspective(1500px) rotateY(${dx*7}deg) rotateX(${-dy*7}deg)`;
+});
+card.addEventListener('mouseleave',()=>{
+  card.style.transform='perspective(1500px) rotateY(0deg) rotateX(0deg)';
+});
+
+/* ══════════════════════════════════════════════
+   COUNTDOWN
+══════════════════════════════════════════════ */
+const TARGET=new Date('2026-12-20T10:00:00+07:00');
+function updateCountdown(){
+  const now=new Date();
+  const diff=TARGET-now;
+  if(diff<=0){
+    document.getElementById('cd-d').textContent='0';
+    document.getElementById('cd-h').textContent='0';
+    document.getElementById('cd-m').textContent='0';
+    document.getElementById('cd-s').textContent='0';
+    return;
+  }
+  const d=Math.floor(diff/86400000);
+  const h=Math.floor((diff%86400000)/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  const s=Math.floor((diff%60000)/1000);
+  document.getElementById('cd-d').textContent=String(d);
+  document.getElementById('cd-h').textContent=String(h).padStart(2,'0');
+  document.getElementById('cd-m').textContent=String(m).padStart(2,'0');
+  document.getElementById('cd-s').textContent=String(s).padStart(2,'0');
+}
+setInterval(updateCountdown,1000);
+updateCountdown();
+
+/* ══════════════════════════════════════════════
+   ICS DOWNLOAD
+══════════════════════════════════════════════ */
+function downloadICS(type){
+  let ics;
+  if(type==='ceremony'){
+    ics=`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Minh&Anh Wedding//VI\r\nBEGIN:VEVENT\r\nUID:ceremony-minhoanh-2026@wedding\r\nDTSTART;TZID=Asia/Ho_Chi_Minh:20261220T100000\r\nDTEND;TZID=Asia/Ho_Chi_Minh:20261220T120000\r\nSUMMARY:Lễ Thành Hôn - Minh & Anh\r\nLOCATION:123 Đường Hoa Lan\\, Quận 1\\, TP.HCM\r\nDESCRIPTION:Tư gia nhà gái - Lễ Thành Hôn Nguyễn Văn Minh & Lê Phương Anh\r\nEND:VEVENT\r\nEND:VCALENDAR`;
+  } else {
+    ics=`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Minh&Anh Wedding//VI\r\nBEGIN:VEVENT\r\nUID:reception-minhoanh-2026@wedding\r\nDTSTART;TZID=Asia/Ho_Chi_Minh:20261220T173000\r\nDTEND;TZID=Asia/Ho_Chi_Minh:20261220T210000\r\nSUMMARY:Tiệc Cưới - Minh & Anh\r\nLOCATION:White Palace - 108 Phạm Văn Đồng\\, TP. Thủ Đức\r\nDESCRIPTION:Sảnh Rose Tầng 3 - Đón khách 17:30 · Khai tiệc 18:30\r\nEND:VEVENT\r\nEND:VCALENDAR`;
+  }
+  const blob=new Blob([ics],{type:'text/calendar'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`dam-cuoi-minh-anh-${type}.ics`;
+  a.click();
+}
+
+/* ══════════════════════════════════════════════
+   RSVP
+══════════════════════════════════════════════ */
+function selectRsvp(choice){
+  rsvpChoice=choice;
+  document.getElementById('btnCome').classList.toggle('selected',choice==='come');
+  document.getElementById('btnMiss').classList.toggle('selected',choice==='miss');
+}
+function submitRsvp(){
+  const name=document.getElementById('rsvpName').value.trim();
+  if(!name){alert('Vui lòng nhập tên của bạn.');return;}
+  if(!rsvpChoice){alert('Vui lòng chọn tham dự hoặc vắng.');return;}
+  alert(`Cảm ơn ${name}! ${rsvpChoice==='come'?'Chúng tôi rất vui được gặp bạn.':'Rất tiếc khi bạn không thể đến. Chúng tôi vẫn trân trọng lời chúc của bạn!'}`);
+  document.getElementById('rsvpName').value='';
+  selectRsvp(null);
+}
+
+/* ══════════════════════════════════════════════
+   ENVELOPE FLIP
+══════════════════════════════════════════════ */
+function flipEnvelope(){
+  document.getElementById('envelope').classList.toggle('flipped');
+}
+
+/* ══════════════════════════════════════════════
+   GUESTBOOK
+══════════════════════════════════════════════ */
+function submitWish(){
+  const name=document.getElementById('gbName').value.trim();
+  const msg=document.getElementById('gbMsg').value.trim();
+  if(!name||!msg){alert('Vui lòng nhập tên và lời chúc.');return;}
+  const list=document.getElementById('wishesList');
+  const item=document.createElement('div');
+  item.className='wish-item';
+  item.innerHTML=`<div class="wish-name">${escHtml(name)}</div><div class="wish-text">${escHtml(msg)}</div>`;
+  list.prepend(item);
+  document.getElementById('gbName').value='';
+  document.getElementById('gbMsg').value='';
+}
+function escHtml(t){
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ══════════════════════════════════════════════
+   PARTICLES
+══════════════════════════════════════════════ */
+(function spawnParticles(){
+  const wrap=document.getElementById('particles');
+  // petals
+  for(let i=0;i<12;i++){
+    const p=document.createElement('div');
+    p.className='petal';
+    p.textContent='❀';
+    const size=11+Math.random()*8;
+    const left=Math.random()*100;
+    const dur=10+Math.random()*8;
+    const delay=-(Math.random()*dur);
+    const drift=(Math.random()-0.5)*80;
+    p.style.cssText=`font-size:${size}px;left:${left}%;top:0;--drift:${drift}px;animation-duration:${dur}s;animation-delay:${delay}s;`;
+    wrap.appendChild(p);
+  }
+  // bokeh
+  for(let i=0;i<7;i++){
+    const b=document.createElement('div');
+    b.className='bokeh';
+    const size=70+Math.random()*150;
+    const left=Math.random()*100;
+    const top=Math.random()*100;
+    const dur=11+Math.random()*9;
+    const delay=-(Math.random()*dur);
+    b.style.cssText=`width:${size}px;height:${size}px;left:${left}%;top:${top}%;animation-duration:${dur}s;animation-delay:${delay}s;`;
+    wrap.appendChild(b);
+  }
+})();
+
+/* ══════════════════════════════════════════════
+   CURTAIN INTRO
+══════════════════════════════════════════════ */
+(function initCurtain(){
+  const curtain=document.getElementById('curtain');
+  const ctop=document.getElementById('ctop');
+  const cbot=document.getElementById('cbot');
+  setTimeout(()=>{
+    ctop.classList.add('up');
+    cbot.classList.add('dn');
+    curtain.style.animation='introFade .5s ease .9s both';
+    curtain.style.animationFillMode='both';
+    setTimeout(()=>{ curtain.classList.add('hide'); },1600);
+  },1500);
+})();
+
+/* ══════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════ */
+updateNav();
+updateProgress(0,DWELL);
+counterEl.textContent='1 / 7';
+setTimeout(startAuto,1700); // after curtain
+</script>
+</body>
+</html>

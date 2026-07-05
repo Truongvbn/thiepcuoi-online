@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>M&amp;A Airways · Flight MA2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    /* ---- Reset & base ---- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #0c1b2a;
+      color: #f4f1ea;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    h1, h2, h3 { text-wrap: balance; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; font-family: inherit; border: none; background: none; }
+    img { display: block; max-width: 100%; }
+    input, textarea { font-family: inherit; }
+
+    /* Focus */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid #f2a65a;
+      outline-offset: 2px;
+      border-radius: 3px;
+    }
+
+    /* ---- Keyframes ---- */
+    @keyframes gridDrift {
+      0%   { transform: translateX(0) translateY(0); }
+      100% { transform: translateX(-60px) translateY(-60px); }
+    }
+    @keyframes blip {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+    @keyframes planePath {
+      0%   { left: 0%; }
+      100% { left: calc(100% - 24px); }
+    }
+    @keyframes stampIn {
+      0%   { transform: scale(2) rotate(-20deg); opacity: 0; }
+      60%  { transform: scale(0.9) rotate(2deg); opacity: 1; }
+      100% { transform: scale(1) rotate(-8deg); opacity: 1; }
+    }
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.25); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---- Grid background ---- */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(242,166,90,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(242,166,90,0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridDrift 8s linear infinite;
+    }
+
+    /* ---- Airline header ---- */
+    .airline-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 32px;
+      background: rgba(12, 27, 42, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(242,166,90,0.12);
+    }
+    .ah-left {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      color: #f4f1ea;
+    }
+    .ah-center {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      color: #f2a65a;
+    }
+    .ah-right {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .live-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      animation: blip 1.5s ease-in-out infinite;
+    }
+    .live-text {
+      font-family: 'Manrope', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      color: #4ade80;
+    }
+
+    /* ---- Main layout ---- */
+    main { position: relative; z-index: 1; }
+
+    .section-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      color: #f2a65a;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    /* ---- Boarding pass section ---- */
+    .bp-section {
+      padding: 80px 24px 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+    }
+
+    /* ---- Boarding pass card ---- */
+    .bp-card {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      max-width: 860px;
+      border-radius: 16px;
+      box-shadow:
+        0 24px 80px rgba(0,0,0,0.65),
+        0 0 0 1px rgba(255,255,255,0.06);
+      overflow: visible;
+      position: relative;
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform 0.05s linear;
+    }
+
+    /* ---- Main section ---- */
+    .bp-main {
+      flex: 1;
+      background: #f4f1ea;
+      border-radius: 16px 0 0 16px;
+      padding: 28px 28px 24px;
+      position: relative;
+      min-width: 0;
+    }
+
+    /* ---- Stamp ---- */
+    .bp-stamp {
+      position: absolute;
+      top: 22px;
+      right: 22px;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 3px solid #b8402f;
+      color: #b8402f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.4;
+      text-align: center;
+      animation: stampIn 0.8s ease 0.5s forwards;
+      opacity: 0;
+      z-index: 10;
+    }
+
+    /* ---- Labels row ---- */
+    .lbl {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #6b8099;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .bp-top {
+      display: flex;
+      gap: 28px;
+      margin-bottom: 20px;
+      padding-right: 84px; /* room for stamp */
+    }
+    .bp-top-cell { }
+    .bp-val-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #0c1b2a;
+      letter-spacing: 0.04em;
+    }
+    .bp-val-flight {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 16px;
+      font-weight: 500;
+      color: #0c1b2a;
+      letter-spacing: 0.08em;
+    }
+    .bp-val-route-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      font-weight: 400;
+      color: #3d5266;
+    }
+
+    /* ---- Route display ---- */
+    .route-display {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0 20px;
+      border-top: 1px solid rgba(12,27,42,0.1);
+      border-bottom: 1px solid rgba(12,27,42,0.1);
+      padding: 16px 0;
+    }
+    .route-end { flex-shrink: 0; text-align: center; }
+    .route-city {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #0c1b2a;
+      letter-spacing: 0.06em;
+    }
+    .route-role {
+      font-family: 'Manrope', sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      color: #6b8099;
+      margin-top: 2px;
+    }
+    .route-mid {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .route-track {
+      position: relative;
+      overflow: hidden;
+      height: 28px;
+    }
+    .route-track::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(242,166,90,0.6) 0px,
+        rgba(242,166,90,0.6) 4px,
+        transparent 4px,
+        transparent 8px
+      );
+    }
+    .plane-mover {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      animation: planePath 3.2s linear infinite;
+      line-height: 1;
+      filter: drop-shadow(0 0 3px rgba(242,166,90,0.5));
+    }
+
+    /* ---- Info grid ---- */
+    .bp-info-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border: 1px solid rgba(12,27,42,0.12);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .bi-cell {
+      padding: 10px 12px;
+      border-right: 1px solid rgba(12,27,42,0.1);
+    }
+    .bi-cell:last-child { border-right: none; }
+    .bi-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #0c1b2a;
+      display: block;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ---- Countdown ---- */
+    .countdown-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+      background: rgba(242,166,90,0.08);
+      border: 1px solid rgba(242,166,90,0.2);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+    .cd-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 48px;
+    }
+    .cd-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 22px;
+      font-weight: 500;
+      color: #f2a65a;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .cd-lbl {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 8px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      color: #8da3b5;
+      margin-top: 4px;
+    }
+    .cd-sep {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 20px;
+      font-weight: 400;
+      color: rgba(242,166,90,0.4);
+      margin-top: 1px;
+      padding: 0 1px;
+    }
+
+    .bp-note {
+      font-family: 'Manrope', sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      color: #8da3b5;
+      letter-spacing: 0.1em;
+      border-top: 1px dashed rgba(12,27,42,0.15);
+      padding-top: 12px;
+    }
+
+    /* ---- Tear line ---- */
+    .bp-tear {
+      width: 2px;
+      border-left: 2px dashed rgba(160,174,192,0.5);
+      flex-shrink: 0;
+      align-self: stretch;
+      position: relative;
+    }
+    .bp-tear::before,
+    .bp-tear::after {
+      content: '';
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #0c1b2a;
+      left: 50%;
+      z-index: 5;
+    }
+    .bp-tear::before {
+      top: 0;
+      transform: translateX(-50%) translateY(-50%);
+    }
+    .bp-tear::after {
+      bottom: 0;
+      transform: translateX(-50%) translateY(50%);
+    }
+
+    /* ---- Stub ---- */
+    .bp-stub {
+      width: 148px;
+      background: #0d2033;
+      border-radius: 0 16px 16px 0;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .stub-header {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      color: #f2a65a;
+      text-transform: uppercase;
+    }
+    .stub-row {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .stub-val {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: #f4f1ea;
+      display: block;
+    }
+    .barcode {
+      height: 52px;
+      width: 100%;
+      border-radius: 3px;
+      background: repeating-linear-gradient(
+        90deg,
+        #f4f1ea 0px,    #f4f1ea 2px,
+        transparent 2px,transparent 4px,
+        #f4f1ea 4px,    #f4f1ea 7px,
+        transparent 7px,transparent 9px,
+        #f4f1ea 9px,    #f4f1ea 11px,
+        transparent 11px,transparent 14px,
+        #f4f1ea 14px,   #f4f1ea 17px,
+        transparent 17px,transparent 18px,
+        #f4f1ea 18px,   #f4f1ea 21px,
+        transparent 21px,transparent 24px,
+        #f4f1ea 24px,   #f4f1ea 26px,
+        transparent 26px,transparent 28px,
+        #f4f1ea 28px,   #f4f1ea 32px,
+        transparent 32px,transparent 34px,
+        #f4f1ea 34px,   #f4f1ea 36px,
+        transparent 36px,transparent 40px
+      );
+      margin-top: auto;
+    }
+    .stub-code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      font-weight: 400;
+      color: rgba(244,241,234,0.4);
+      text-align: center;
+      letter-spacing: 0.1em;
+    }
+
+    /* ---- CTA buttons ---- */
+    .cta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .cta-primary {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      background: #e0654e;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      letter-spacing: 0.04em;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .cta-primary:hover { background: #c8543d; transform: translateY(-1px); }
+    .cta-outline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      background: transparent;
+      color: #f4f1ea;
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: 1px solid rgba(244,241,234,0.25);
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      display: inline-block;
+    }
+    .cta-outline:hover {
+      border-color: rgba(244,241,234,0.55);
+      background: rgba(244,241,234,0.06);
+      transform: translateY(-1px);
+    }
+
+    /* ---- Itinerary ---- */
+    .itinerary-section {
+      padding: 80px 0;
+      border-top: 1px solid rgba(242,166,90,0.1);
+    }
+    .itinerary-table { display: flex; flex-direction: column; gap: 2px; }
+    .it-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr 1fr;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 20px 20px 0;
+      border-bottom: 1px solid rgba(244,241,234,0.07);
+      border-left: 3px solid #f2a65a;
+      padding-left: 20px;
+      border-radius: 0 6px 6px 0;
+      background: rgba(255,255,255,0.02);
+    }
+    .it-time {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 18px;
+      font-weight: 500;
+      color: #f2a65a;
+      font-variant-numeric: tabular-nums;
+    }
+    .it-event {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #f4f1ea;
+    }
+    .it-location {
+      font-family: 'Manrope', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: #8da3b5;
+    }
+    .it-detail {
+      font-family: 'Manrope', sans-serif;
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(244,241,234,0.5);
+    }
+
+    /* ---- Gallery ---- */
+    .gallery-section {
+      padding: 80px 0;
+      border-top: 1px solid rgba(242,166,90,0.1);
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 280px 200px;
+      gap: 8px;
+    }
+    .gallery-item {
+      overflow: hidden;
+      border-radius: 6px;
+      cursor: zoom-in;
+      position: relative;
+    }
+    .gallery-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(12,27,42,0);
+      transition: background 0.3s;
+    }
+    .gallery-item:hover::after { background: rgba(12,27,42,0.25); }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.04); }
+    .gi-1 { grid-row: 1 / 3; }
+    .gi-2 { grid-column: 2; grid-row: 1; }
+    .gi-3 { grid-column: 3; grid-row: 1; }
+    .gi-4 { grid-column: 2 / 4; grid-row: 2; }
+
+    /* ---- Dresscode ---- */
+    .dresscode-section {
+      padding: 80px 0;
+      border-top: 1px solid rgba(242,166,90,0.1);
+    }
+    .swatches {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .swatch-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .swatch {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: transform 0.2s;
+    }
+    .swatch-item:hover .swatch { transform: scale(1.1); }
+    .swatch-lbl {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      color: #8da3b5;
+      text-transform: uppercase;
+    }
+
+    /* ---- Guestbook ---- */
+    .guestbook-section {
+      padding: 80px 0;
+      border-top: 1px solid rgba(242,166,90,0.1);
+    }
+    .guestbook-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .gb-textarea {
+      width: 100%;
+      background: rgba(244,241,234,0.06);
+      border: 1px solid rgba(244,241,234,0.15);
+      border-radius: 8px;
+      padding: 14px 16px;
+      color: #f4f1ea;
+      font-size: 14px;
+      resize: vertical;
+      min-height: 96px;
+      transition: border-color 0.2s;
+    }
+    .gb-textarea::placeholder { color: rgba(244,241,234,0.3); }
+    .gb-textarea:focus { outline: none; border-color: rgba(242,166,90,0.5); }
+    .gb-form-row {
+      display: flex;
+      gap: 10px;
+    }
+    .gb-input {
+      flex: 1;
+      background: rgba(244,241,234,0.06);
+      border: 1px solid rgba(244,241,234,0.15);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: #f4f1ea;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    .gb-input::placeholder { color: rgba(244,241,234,0.3); }
+    .gb-input:focus { outline: none; border-color: rgba(242,166,90,0.5); }
+    .gb-submit {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      background: rgba(242,166,90,0.15);
+      border: 1px solid rgba(242,166,90,0.35);
+      color: #f2a65a;
+      padding: 12px 22px;
+      border-radius: 8px;
+      letter-spacing: 0.04em;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .gb-submit:hover { background: rgba(242,166,90,0.25); transform: translateY(-1px); }
+    .gb-messages {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .gb-msg {
+      background: rgba(244,241,234,0.04);
+      border: 1px solid rgba(244,241,234,0.1);
+      border-left: 3px solid rgba(242,166,90,0.6);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 16px;
+    }
+    .gb-msg-text {
+      font-family: 'Manrope', sans-serif;
+      font-size: 14px;
+      color: #f4f1ea;
+      line-height: 1.6;
+      margin-bottom: 6px;
+    }
+    .gb-msg-name {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: #8da3b5;
+    }
+
+    /* ---- Footer ---- */
+    .site-footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 60px 24px;
+      border-top: 1px solid rgba(242,166,90,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .footer-airline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: 0.12em;
+      color: #f2a65a;
+    }
+    .footer-flight {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      color: rgba(244,241,234,0.5);
+    }
+    .footer-heart {
+      font-size: 22px;
+      color: #e0654e;
+      animation: beat 1.4s ease-in-out infinite;
+      display: inline-block;
+      margin: 4px 0;
+    }
+    .footer-nav {
+      display: flex;
+      gap: 20px;
+      margin-top: 6px;
+    }
+    .footer-nav a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: rgba(244,241,234,0.3);
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: rgba(244,241,234,0.7); }
+
+    /* ---- Check-in modal ---- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal-box {
+      background: #0d2033;
+      border: 1px solid rgba(242,166,90,0.2);
+      border-radius: 12px;
+      max-width: 480px;
+      width: 100%;
+      padding: 32px;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(16px);
+      transition: transform 0.25s ease;
+    }
+    .modal-overlay.active .modal-box { transform: translateY(0); }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 22px;
+      color: rgba(244,241,234,0.4);
+      line-height: 1;
+      transition: color 0.2s;
+      padding: 4px 8px;
+    }
+    .modal-close:hover { color: #f4f1ea; }
+    .modal-header {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 0.1em;
+      color: #f4f1ea;
+      margin-bottom: 12px;
+    }
+    .modal-accent-line {
+      height: 2px;
+      width: 40px;
+      background: #f2a65a;
+      border-radius: 2px;
+      margin-bottom: 24px;
+    }
+    .checkin-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .form-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      color: #8da3b5;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(244,241,234,0.07);
+      border: 1px solid rgba(244,241,234,0.15);
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: #f4f1ea;
+      font-size: 15px;
+      transition: border-color 0.2s;
+    }
+    .form-input::placeholder { color: rgba(244,241,234,0.25); }
+    .form-input:focus { outline: none; border-color: rgba(242,166,90,0.5); }
+    .attend-toggle {
+      display: flex;
+      gap: 8px;
+    }
+    .attend-btn {
+      flex: 1;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(244,241,234,0.15);
+      background: rgba(244,241,234,0.05);
+      color: rgba(244,241,234,0.5);
+      transition: all 0.2s;
+    }
+    .attend-btn.active {
+      background: rgba(242,166,90,0.15);
+      border-color: rgba(242,166,90,0.45);
+      color: #f2a65a;
+    }
+    .form-submit {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      background: #e0654e;
+      color: #fff;
+      padding: 14px;
+      border-radius: 8px;
+      letter-spacing: 0.05em;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .form-submit:hover { background: #c8543d; transform: translateY(-1px); }
+    .duty-free {
+      border-top: 1px solid rgba(244,241,234,0.1);
+      padding-top: 24px;
+    }
+    .duty-free-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      color: #f2a65a;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .qr-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+    .qr-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .qr-item img {
+      border-radius: 6px;
+      border: 3px solid rgba(244,241,234,0.1);
+    }
+    .qr-bank {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: #f2a65a;
+    }
+    .qr-name {
+      font-family: 'Manrope', sans-serif;
+      font-size: 12px;
+      color: #f4f1ea;
+      text-align: center;
+    }
+    .qr-acc {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: rgba(244,241,234,0.5);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ---- Lightbox ---- */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .lightbox.active { opacity: 1; pointer-events: all; }
+    .lb-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-size: 28px;
+      color: rgba(244,241,234,0.6);
+      line-height: 1;
+      transition: color 0.2s;
+      padding: 4px 8px;
+    }
+    .lb-close:hover { color: #f4f1ea; }
+    .lb-img {
+      max-width: 100%;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.8);
+    }
+
+    /* ---- Success toast ---- */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #0d2033;
+      border: 1px solid rgba(242,166,90,0.3);
+      color: #f4f1ea;
+      font-family: 'Manrope', sans-serif;
+      font-size: 14px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      z-index: 300;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ---- Reduced motion ---- */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 640px) {
+      .airline-header { padding: 12px 16px; }
+      .ah-center { display: none; }
+      .bp-section { padding: 40px 12px 48px; }
+      .bp-card {
+        flex-direction: column;
+        max-width: 100%;
+      }
+      .bp-main {
+        border-radius: 16px 16px 0 0;
+        padding: 22px 18px 20px;
+      }
+      .bp-tear {
+        width: 100%;
+        height: 2px;
+        border-left: none;
+        border-top: 2px dashed rgba(160,174,192,0.5);
+        align-self: auto;
+      }
+      .bp-tear::before,
+      .bp-tear::after {
+        top: 50%;
+        left: auto;
+        transform: translateX(0) translateY(-50%);
+        width: 20px;
+        height: 20px;
+      }
+      .bp-tear::before {
+        left: 0;
+        transform: translateX(-50%) translateY(-50%);
+      }
+      .bp-tear::after {
+        right: 0;
+        left: auto;
+        transform: translateX(50%) translateY(-50%);
+      }
+      .bp-stub {
+        width: 100%;
+        border-radius: 0 0 16px 16px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 16px;
+      }
+      .stub-header { width: 100%; }
+      .barcode { width: 100%; order: 10; margin-top: 0; }
+      .stub-code { width: 100%; }
+      .bp-info-grid { grid-template-columns: repeat(2, 1fr); }
+      .bp-top { padding-right: 80px; }
+      .bp-val-name { font-size: 15px; }
+      .route-city { font-size: 22px; }
+      .cd-num { font-size: 18px; }
+      .cd-unit { min-width: 38px; }
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 180px 180px 180px;
+      }
+      .gi-1 { grid-column: 1 / 3; grid-row: 1; }
+      .gi-2 { grid-column: 1; grid-row: 2; }
+      .gi-3 { grid-column: 2; grid-row: 2; }
+      .gi-4 { grid-column: 1 / 3; grid-row: 3; }
+      .it-row {
+        grid-template-columns: 64px 1fr;
+        grid-template-rows: auto auto;
+        gap: 4px 12px;
+      }
+      .it-event { grid-column: 2; }
+      .it-location { grid-column: 2; }
+      .it-detail { display: none; }
+      .cta-row { flex-direction: column; align-items: stretch; }
+      .cta-primary, .cta-outline { text-align: center; }
+      .qr-row { flex-direction: column; }
+      .section-container { padding: 0 16px; }
+      .attend-toggle { flex-direction: column; }
+    }
+    @media (max-width: 400px) {
+      .bp-top { flex-wrap: wrap; gap: 12px; }
+      .bp-stamp { width: 60px; height: 60px; font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Animated grid background -->
+<div class="grid-bg" aria-hidden="true"></div>
+
+<!-- Section 1: Airline header -->
+<header class="airline-header">
+  <div class="ah-left">M&amp;A AIRWAYS</div>
+  <div class="ah-center">FOREVER &middot; ONE WAY</div>
+  <div class="ah-right">
+    <span class="live-dot" aria-hidden="true"></span>
+    <span class="live-text">LIVE</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- Section 2: Boarding pass hero -->
+  <section class="bp-section">
+    <div class="bp-card" id="bpCard">
+
+      <!-- Main section -->
+      <div class="bp-main">
+        <!-- Circular stamp -->
+        <div class="bp-stamp" aria-label="Date stamp: 20/12/2026">
+          <span>20</span>
+          <span>12</span>
+          <span>2026</span>
+        </div>
+
+        <!-- Top labels + values -->
+        <div class="bp-top">
+          <div class="bp-top-cell">
+            <span class="lbl">PASSENGER</span>
+            <span class="bp-val-name">MINH &amp; ANH</span>
+          </div>
+          <div class="bp-top-cell">
+            <span class="lbl">FLIGHT</span>
+            <span class="bp-val-flight">MA2026</span>
+          </div>
+          <div class="bp-top-cell">
+            <span class="lbl">ROUTE</span>
+            <span class="bp-val-route-label">MINH &#x2708; ANH</span>
+          </div>
+        </div>
+
+        <!-- Animated route display -->
+        <div class="route-display">
+          <div class="route-end">
+            <div class="route-city">MINH</div>
+            <div class="route-role">Ch&#xFA; R&#x1EC3;</div>
+          </div>
+          <div class="route-mid">
+            <div class="route-track" aria-hidden="true">
+              <span class="plane-mover">&#x2708;</span>
+            </div>
+          </div>
+          <div class="route-end">
+            <div class="route-city">ANH</div>
+            <div class="route-role">C&ocirc; D&acirc;u</div>
+          </div>
+        </div>
+
+        <!-- Info grid -->
+        <div class="bp-info-grid">
+          <div class="bi-cell">
+            <span class="lbl">DATE</span>
+            <span class="bi-val">20&middot;12&middot;26</span>
+          </div>
+          <div class="bi-cell">
+            <span class="lbl">GATE</span>
+            <span class="bi-val">WHITE PALACE</span>
+          </div>
+          <div class="bi-cell">
+            <span class="lbl">BOARDING</span>
+            <span class="bi-val">17:30</span>
+          </div>
+          <div class="bi-cell">
+            <span class="lbl">SEAT</span>
+            <span class="bi-val">2A &middot; 20C</span>
+          </div>
+        </div>
+
+        <!-- Countdown -->
+        <div class="countdown-box" aria-label="Countdown to wedding reception">
+          <div class="cd-unit">
+            <span class="cd-num" id="cdDays">---</span>
+            <span class="cd-lbl">DD</span>
+          </div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit">
+            <span class="cd-num" id="cdHours">--</span>
+            <span class="cd-lbl">HH</span>
+          </div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit">
+            <span class="cd-num" id="cdMins">--</span>
+            <span class="cd-lbl">MM</span>
+          </div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit">
+            <span class="cd-num" id="cdSecs">--</span>
+            <span class="cd-lbl">SS</span>
+          </div>
+        </div>
+
+        <!-- Note -->
+        <div class="bp-note">Ti&#x1EC7;c c&#x1B0;&aacute;i &middot; White Palace &middot; 20/12/2026</div>
+      </div>
+
+      <!-- Tear line -->
+      <div class="bp-tear" aria-hidden="true"></div>
+
+      <!-- Stub -->
+      <div class="bp-stub">
+        <div class="stub-header">Boarding<br>Pass</div>
+        <div class="stub-row">
+          <span class="lbl" style="color:rgba(141,163,181,0.7)">FLIGHT</span>
+          <span class="stub-val">MA2026</span>
+        </div>
+        <div class="stub-row">
+          <span class="lbl" style="color:rgba(141,163,181,0.7)">DATE</span>
+          <span class="stub-val">20.12.26</span>
+        </div>
+        <div class="stub-row">
+          <span class="lbl" style="color:rgba(141,163,181,0.7)">GATE</span>
+          <span class="stub-val">WP-2026</span>
+        </div>
+        <div class="stub-row">
+          <span class="lbl" style="color:rgba(141,163,181,0.7)">SEAT</span>
+          <span class="stub-val">2A</span>
+        </div>
+        <div class="barcode" aria-hidden="true"></div>
+        <div class="stub-code">MA2026 &middot; M&amp;A</div>
+      </div>
+
+    </div><!-- /.bp-card -->
+
+    <!-- CTA buttons -->
+    <div class="cta-row">
+      <button class="cta-primary" id="openCheckin">&#10003; Check-in &middot; X&aacute;c Nh&#x1EAD;n</button>
+      <button class="cta-outline" id="downloadICS">+ Th&ecirc;m v&agrave;o l&#x1ECB;ch</button>
+      <a class="cta-outline" href="#" aria-label="Chỉ đường đến White Palace">&#9904; Ch&#x1EC9; &#x111;&#x1B0;&#x1EDD;ng</a>
+    </div>
+  </section>
+
+  <!-- Section 3: Itinerary -->
+  <section class="itinerary-section">
+    <div class="section-container">
+      <div class="section-eyebrow">Itinerary</div>
+      <div class="itinerary-table">
+        <div class="it-row">
+          <div class="it-time">10:00</div>
+          <div class="it-event">L&#x1EC5; Th&agrave;nh H&ocirc;n</div>
+          <div class="it-location">T&#x1B0; gia Nh&agrave; G&aacute;i</div>
+          <div class="it-detail">L&#x1EC5; vu quy &amp; th&agrave;nh h&ocirc;n</div>
+        </div>
+        <div class="it-row">
+          <div class="it-time">17:30</div>
+          <div class="it-event">Ti&#x1EC7;c C&#x1B0;&aacute;i</div>
+          <div class="it-location">White Palace</div>
+          <div class="it-detail">Ti&#x1EC7;c m&#x1EEB;ng c&#x1B0;&aacute;i</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Gallery -->
+  <section class="gallery-section">
+    <div class="section-container">
+      <div class="section-eyebrow">Gallery</div>
+      <div class="gallery-grid">
+        <div class="gallery-item gi-1"
+             data-src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&auto=format&fit=crop">
+          <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop"
+               alt="Wedding ceremony" loading="lazy">
+        </div>
+        <div class="gallery-item gi-2"
+             data-src="https://images.unsplash.com/photo-1606800052052-a08af7148866?w=1200&auto=format&fit=crop">
+          <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?w=400&auto=format&fit=crop"
+               alt="Wedding couple" loading="lazy">
+        </div>
+        <div class="gallery-item gi-3"
+             data-src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1200&auto=format&fit=crop">
+          <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&auto=format&fit=crop"
+               alt="Wedding reception" loading="lazy">
+        </div>
+        <div class="gallery-item gi-4"
+             data-src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=1200&auto=format&fit=crop">
+          <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800&auto=format&fit=crop"
+               alt="Wedding flowers" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Dresscode -->
+  <section class="dresscode-section">
+    <div class="section-container">
+      <div class="section-eyebrow">Dress Code</div>
+      <div class="swatches">
+        <div class="swatch-item">
+          <div class="swatch" style="background:#0c1b2a; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);" aria-label="Navy"></div>
+          <span class="swatch-lbl">Navy</span>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch" style="background:#1a3a5c;" aria-label="Dark Blue"></div>
+          <span class="swatch-lbl">Dark Blue</span>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch" style="background:#e0654e;" aria-label="Coral"></div>
+          <span class="swatch-lbl">Coral</span>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch" style="background:#f2a65a;" aria-label="Amber"></div>
+          <span class="swatch-lbl">Amber</span>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch" style="background:#f4f1ea; box-shadow: inset 0 0 0 1px rgba(12,27,42,0.15);" aria-label="Cream"></div>
+          <span class="swatch-lbl">Cream</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 6: Guestbook -->
+  <section class="guestbook-section">
+    <div class="section-container">
+      <div class="section-eyebrow">Passenger Messages</div>
+      <div class="guestbook-form">
+        <textarea class="gb-textarea"
+                  placeholder="G&#x1EED;i l&#x1EDD;i ch&#xFA;c t&#x1EDB;i &#x111;&ocirc;i uy&ecirc;n &#x1B0;&#x1A1;ng..."
+                  aria-label="Lời chúc"></textarea>
+        <div class="gb-form-row">
+          <input class="gb-input" type="text"
+                 placeholder="T&ecirc;n c&#x1EE7;a b&#x1EA1;n"
+                 aria-label="Tên của bạn">
+          <button class="gb-submit">G&#x1EED;i l&#x1EDD;i ch&#xFA;c</button>
+        </div>
+      </div>
+      <div class="gb-messages" id="gbMessages"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-airline">M&amp;A AIRWAYS</div>
+  <div class="footer-flight">Flight MA2026 &middot; 20.12.2026</div>
+  <div class="footer-heart" aria-hidden="true">&#x2665;</div>
+  <nav class="footer-nav" aria-label="Other versions">
+    <a href="v1.html">v1</a>
+    <a href="v2.html">v2</a>
+    <a href="v3.html">v3</a>
+    <a href="v4.html">v4</a>
+    <a href="v5.html">v5</a>
+  </nav>
+</footer>
+
+<!-- Check-in modal -->
+<div class="modal-overlay" id="checkinModal" role="dialog" aria-modal="true"
+     aria-label="Check-in form" aria-hidden="true">
+  <div class="modal-box">
+    <button class="modal-close" id="closeModal" aria-label="Đóng">&times;</button>
+    <div class="modal-header">CHECK-IN</div>
+    <div class="modal-accent-line"></div>
+    <form class="checkin-form" id="checkinForm" novalidate>
+      <div>
+        <label class="form-label" for="passengerName">T&ecirc;n h&agrave;nh kh&aacute;ch</label>
+        <input class="form-input" type="text" id="passengerName"
+               placeholder="H&#x1ECD; v&agrave; t&ecirc;n" required>
+      </div>
+      <div>
+        <div class="form-label">X&aacute;c nh&#x1EAD;n tham d&#x1EF1;</div>
+        <div class="attend-toggle">
+          <button type="button" class="attend-btn active" data-val="yes">&#x1F6EB; T&ocirc;i s&#x1EBD; l&ecirc;n t&agrave;u</button>
+          <button type="button" class="attend-btn" data-val="no">&#x1F6EC; Xin ph&eacute;p l&#x1EE1; chuy&#x1EBF;n</button>
+        </div>
+      </div>
+      <div>
+        <label class="form-label" for="seatNum">S&#x1ED1; gh&#x1EBF; (ng&#x01B0;&#x1EDD;i &#x111;i c&ugrave;ng)</label>
+        <input class="form-input" type="text" id="seatNum" placeholder="2A &middot; 20C">
+      </div>
+      <button type="submit" class="form-submit">X&aacute;c nh&#x1EAD;n check-in</button>
+    </form>
+
+    <!-- Duty free / gift section -->
+    <div class="duty-free">
+      <div class="duty-free-label">Duty Free &middot; Qu&agrave; T&#x1EB7;ng</div>
+      <div class="qr-row">
+        <div class="qr-item">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=VCB-MINH-9021234567"
+               alt="Vietcombank QR code" width="120" height="120">
+          <div class="qr-bank">Vietcombank</div>
+          <div class="qr-name">Nguy&#x1EC5;n V&#x0103;n Minh</div>
+          <div class="qr-acc">9021234567</div>
+        </div>
+        <div class="qr-item">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=TCB-ANH-1029876543"
+               alt="Techcombank QR code" width="120" height="120">
+          <div class="qr-bank">Techcombank</div>
+          <div class="qr-name">Tr&#x1EA7;n Th&#x1ECB; Anh</div>
+          <div class="qr-acc">1029876543</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true"
+     aria-label="Photo viewer" aria-hidden="true">
+  <button class="lb-close" id="closeLb" aria-label="Đóng">&times;</button>
+  <img class="lb-img" id="lbImg" src="" alt="Wedding photo">
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---- GSAP setup ---- */
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ---- Countdown ---- */
+  const TARGET = new Date('2026-12-20T17:30:00+07:00').getTime();
+
+  function pad(n, len) {
+    return String(n).padStart(len, '0');
+  }
+
+  function updateCountdown() {
+    var diff = TARGET - Date.now();
+    if (diff <= 0) {
+      document.getElementById('cdDays').textContent = '000';
+      document.getElementById('cdHours').textContent = '00';
+      document.getElementById('cdMins').textContent = '00';
+      document.getElementById('cdSecs').textContent = '00';
+      return;
+    }
+    var days  = Math.floor(diff / 86400000);
+    diff -= days * 86400000;
+    var hours = Math.floor(diff / 3600000);
+    diff -= hours * 3600000;
+    var mins  = Math.floor(diff / 60000);
+    diff -= mins * 60000;
+    var secs  = Math.floor(diff / 1000);
+    document.getElementById('cdDays').textContent  = pad(days, 3);
+    document.getElementById('cdHours').textContent = pad(hours, 2);
+    document.getElementById('cdMins').textContent  = pad(mins, 2);
+    document.getElementById('cdSecs').textContent  = pad(secs, 2);
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  /* ---- 3D tilt ---- */
+  var bpCard = document.getElementById('bpCard');
+  var tiltReady = false;
+
+  bpCard.addEventListener('mousemove', function (e) {
+    if (!tiltReady) return;
+    var rect = bpCard.getBoundingClientRect();
+    var x = (e.clientX - rect.left) / rect.width - 0.5;
+    var y = (e.clientY - rect.top) / rect.height - 0.5;
+    bpCard.style.transform = 'perspective(1200px) rotateY(' + (x * 10) + 'deg) rotateX(' + (-y * 10) + 'deg)';
+  });
+
+  bpCard.addEventListener('mouseleave', function () {
+    if (!tiltReady) return;
+    bpCard.style.transition = 'transform 0.5s ease';
+    bpCard.style.transform = 'perspective(1200px) rotateY(0deg) rotateX(0deg)';
+    setTimeout(function () { bpCard.style.transition = ''; }, 500);
+  });
+
+  /* ---- GSAP: boarding pass entrance ---- */
+  gsap.from('#bpCard', {
+    y: 60,
+    opacity: 0,
+    duration: 1.2,
+    ease: 'power3.out',
+    delay: 0.2,
+    onComplete: function () { tiltReady = true; }
+  });
+
+  gsap.from('.cta-row', {
+    y: 20,
+    opacity: 0,
+    duration: 0.8,
+    ease: 'power2.out',
+    delay: 0.9
+  });
+
+  /* ---- GSAP: Itinerary ---- */
+  gsap.from('.it-row', {
+    x: -30,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.18,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: '.itinerary-section',
+      start: 'top 82%'
+    }
+  });
+
+  /* ---- GSAP: Gallery clip-path reveal ---- */
+  var galleryItems = document.querySelectorAll('.gallery-item');
+  galleryItems.forEach(function (item, i) {
+    gsap.fromTo(item,
+      { clipPath: 'inset(0 100% 0 0)' },
+      {
+        clipPath: 'inset(0 0% 0 0)',
+        duration: 1.1,
+        ease: 'power3.out',
+        delay: i * 0.12,
+        scrollTrigger: {
+          trigger: '.gallery-section',
+          start: 'top 82%'
+        }
+      }
+    );
+  });
+
+  /* ---- GSAP: Dresscode swatches ---- */
+  gsap.from('.swatch-item', {
+    y: 24,
+    opacity: 0,
+    duration: 0.7,
+    stagger: 0.08,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: '.dresscode-section',
+      start: 'top 85%'
+    }
+  });
+
+  /* ---- Modal: Check-in ---- */
+  var checkinModal = document.getElementById('checkinModal');
+  var openCheckinBtn = document.getElementById('openCheckin');
+  var closeModalBtn = document.getElementById('closeModal');
+
+  function openModal() {
+    checkinModal.classList.add('active');
+    checkinModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    closeModalBtn.focus();
+  }
+
+  function closeModal() {
+    checkinModal.classList.remove('active');
+    checkinModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    openCheckinBtn.focus();
+  }
+
+  openCheckinBtn.addEventListener('click', openModal);
+  closeModalBtn.addEventListener('click', closeModal);
+  checkinModal.addEventListener('click', function (e) {
+    if (e.target === checkinModal) closeModal();
+  });
+
+  /* ---- Attendance toggle ---- */
+  document.querySelectorAll('.attend-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.attend-btn').forEach(function (b) {
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
+    });
+  });
+
+  /* ---- Check-in form submit ---- */
+  document.getElementById('checkinForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    closeModal();
+    showToast('✓ Check-in th&agrave;nh c&ocirc;ng! H&#x1E39;n g&#x1EB7;p b&#x1EA1;n ng&agrave;y 20/12/2026');
+  });
+
+  /* ---- ICS download ---- */
+  document.getElementById('downloadICS').addEventListener('click', function () {
+    var ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//M&A Airways//MA2026//VI',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      'DTSTART:20261220T103000Z',
+      'DTEND:20261220T140000Z',
+      'SUMMARY:Tiệc Cưới Minh & Anh',
+      'LOCATION:White Palace',
+      'DESCRIPTION:Tiệc mừng cưới · Flight MA2026 · M&A Airways',
+      'STATUS:CONFIRMED',
+      'TRANSP:OPAQUE',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+
+    var blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'tiec-cuoi-minh-anh.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('&#128197; &#x110;&atilde; th&ecirc;m v&agrave;o l&#x1ECB;ch!');
+  });
+
+  /* ---- Lightbox ---- */
+  var lightbox  = document.getElementById('lightbox');
+  var lbImg     = document.getElementById('lbImg');
+  var closeLbBtn = document.getElementById('closeLb');
+
+  function openLightbox(src, alt) {
+    lbImg.src = src;
+    lbImg.alt = alt || 'Wedding photo';
+    lightbox.classList.add('active');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    closeLbBtn.focus();
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.gallery-item').forEach(function (item) {
+    item.addEventListener('click', function () {
+      var src = item.getAttribute('data-src');
+      var alt = item.querySelector('img') ? item.querySelector('img').alt : '';
+      openLightbox(src, alt);
+    });
+  });
+
+  closeLbBtn.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', function (e) {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  /* ---- Keyboard support ---- */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      if (lightbox.classList.contains('active'))      closeLightbox();
+      if (checkinModal.classList.contains('active'))  closeModal();
+    }
+  });
+
+  /* ---- Guestbook ---- */
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  var STORAGE_KEY = 'ma-airways-messages-v1';
+
+  function loadMessages() {
+    try {
+      var stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch (e) { /* ignore */ }
+    return [{ text: 'Ch&#xFA;c chuy&#x1EBF;n bay h&#x1EA1;nh ph&#xFA;c m&atilde;i m&atilde;i! &#x2708;&#xFE0F;', name: 'Lan &amp; H&#xF9;ng' }];
+  }
+
+  function saveMessages(msgs) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(msgs));
+    } catch (e) { /* ignore */ }
+  }
+
+  function renderMessages(msgs) {
+    var container = document.getElementById('gbMessages');
+    container.innerHTML = msgs.map(function (m) {
+      return '<div class="gb-msg">'
+        + '<div class="gb-msg-text">' + m.text + '</div>'
+        + '<div class="gb-msg-name">&mdash; ' + m.name + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  var messages = loadMessages();
+  renderMessages(messages);
+
+  document.querySelector('.gb-submit').addEventListener('click', function () {
+    var textarea = document.querySelector('.gb-textarea');
+    var nameInput = document.querySelector('.gb-input');
+    var text = textarea.value.trim();
+    var name = nameInput.value.trim();
+    if (!text) {
+      textarea.focus();
+      return;
+    }
+    var msg = { text: escapeHtml(text), name: escapeHtml(name || 'Ẩn danh') };
+    messages.unshift(msg);
+    saveMessages(messages);
+    renderMessages(messages);
+
+    var firstMsg = document.querySelector('.gb-msg');
+    if (firstMsg) {
+      gsap.from(firstMsg, { opacity: 0, y: -16, duration: 0.4, ease: 'power2.out' });
+    }
+
+    textarea.value  = '';
+    nameInput.value = '';
+    showToast('&#x2709;&#xFE0F; L&#x1EDD;i ch&#xFA;c &#x111;&atilde; &#x111;&#x01B0;&#x1EE3;c g&#x1EED;i!');
+  });
+
+  /* ---- Toast ---- */
+  var toastEl = document.getElementById('toast');
+  var toastTimer;
+
+  function showToast(html) {
+    toastEl.innerHTML = html;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toastEl.classList.remove('show');
+    }, 3200);
+  }
+
+})();
+</script>
+</body>
+</html>
